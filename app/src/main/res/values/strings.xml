@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Web2Android</string>
+    <string name="default_server">http://192.168.0.3:3001</string>
+</resources>
