@@ -1,7 +1,8 @@
-package com.example.web2android;
+package webrtc.module.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -48,6 +49,8 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import pub.devrel.easypermissions.EasyPermissions;
+import webrtc.module.R;
+import webrtc.module.util.WebSocketClient;
 
 /**
  * 被呼端
@@ -56,7 +59,7 @@ public class JoinActivity extends AppCompatActivity {
     private Emitter.Listener onId = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            mWebSocketClient.start("bourne2");
+            mWebSocketClient.start("bourne3");
         }
     };
 
@@ -230,43 +233,6 @@ public class JoinActivity extends AppCompatActivity {
         }
     }
 
-    public class WebSocketClient {
-        private Socket client;
-
-        public void connect(String url) {
-            try {
-                client = IO.socket(url);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-            client.on("id", JoinActivity.this.onId);
-            client.on("message", JoinActivity.this.onMessage);
-            client.connect();
-        }
-
-        public void start(String name) {
-            try {
-                JSONObject message = new JSONObject();
-                message.put("name", name);
-                client.emit("readyToStream", message);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void sendMessage(JSONObject message) throws JSONException {
-            client.emit("message", message);
-        }
-
-        public void sendMessage(String to, String type, JSONObject payload) throws JSONException {
-            JSONObject message = new JSONObject();
-            message.put("to", to);
-            message.put("type", type);
-            message.put("payload", payload);
-            client.emit("message", message);
-        }
-    }
-
     private WebSocketClient mWebSocketClient;
 
     private static final int VIDEO_RESOLUTION_WIDTH = 1280;
@@ -309,13 +275,13 @@ public class JoinActivity extends AppCompatActivity {
 
         createPeerConnection();
 
-        mWebSocketClient = new WebSocketClient();
-        mWebSocketClient.connect(getResources().getString(R.string.default_server));
+        Intent intent = getIntent();
+        String url = intent.getStringExtra("url");
 
-        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-        if (!EasyPermissions.hasPermissions(this, perms)) {
-            EasyPermissions.requestPermissions(this, "Need permissions for camera & microphone", 0, perms);
-        }
+        mWebSocketClient = WebSocketClient.instance();
+        mWebSocketClient.connect(url);
+        mWebSocketClient.on("id", JoinActivity.this.onId);
+        mWebSocketClient.on("message", JoinActivity.this.onMessage);
     }
 
     public void createPeerConnection() {
