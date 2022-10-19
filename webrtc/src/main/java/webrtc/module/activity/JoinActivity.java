@@ -1,6 +1,5 @@
 package webrtc.module.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,15 +39,11 @@ import org.webrtc.VideoTrack;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
 
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import pub.devrel.easypermissions.EasyPermissions;
 import webrtc.module.R;
 import webrtc.module.util.WebSocketClient;
 
