@@ -1,4 +1,5 @@
 <resources>
+    <string name="app_name">VOIP</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="web_rtc_server">http://192.168.2.220:3001</string>
 </resources>
