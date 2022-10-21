@@ -1,12 +1,13 @@
 package webrtc.module.activity;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,18 +46,15 @@ import java.util.List;
 
 import io.socket.emitter.Emitter;
 import webrtc.module.R;
+import webrtc.module.VoipApp;
+import webrtc.module.service.VoipReceiver;
 import webrtc.module.util.WebSocketClient;
 
 /**
  * 被呼端
  */
-public class JoinActivity extends AppCompatActivity {
-    private Emitter.Listener onId = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            mWebSocketClient.start("bourne3");
-        }
-    };
+public class JoinActivity extends BaseActivity {
+
 
     public Emitter.Listener onMessage = new Emitter.Listener() {
 
@@ -72,9 +70,7 @@ public class JoinActivity extends AppCompatActivity {
                 // if (id == null)
                 id = data.getString("from");
 
-                if (type.equals("invite")) {
-                    onInvite();
-                } else if (type.equals("init")) {
+                if (type.equals("init")) {
                     onInit();
                 } else if (type.equals("offer")) {
                     onOffer(payload);
@@ -88,10 +84,6 @@ public class JoinActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-
-        private void onInvite() throws JSONException {
-            mWebSocketClient.sendMessage(id, "accept", null);
         }
 
         private void onInit() {
@@ -265,7 +257,6 @@ public class JoinActivity extends AppCompatActivity {
     private String id;
     private MediaConstraints mMediaConstraints = new MediaConstraints();
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -280,8 +271,6 @@ public class JoinActivity extends AppCompatActivity {
         String url = intent.getStringExtra("url");
 
         mWebSocketClient = WebSocketClient.instance();
-        mWebSocketClient.connect(url);
-        mWebSocketClient.on("id", JoinActivity.this.onId);
         mWebSocketClient.on("message", JoinActivity.this.onMessage);
     }
 

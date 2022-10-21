@@ -1,6 +1,7 @@
 package webrtc.activity;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,10 +10,48 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.web2android.R;
 
-import pub.devrel.easypermissions.EasyPermissions;
-import webrtc.module.activity.JoinActivity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+import io.socket.emitter.Emitter;
+import pub.devrel.easypermissions.EasyPermissions;
+import webrtc.module.VoipApp;
+import webrtc.module.activity.BaseActivity;
+import webrtc.module.activity.InviteActivity;
+import webrtc.module.activity.JoinActivity;
+import webrtc.module.service.VoipReceiver;
+import webrtc.module.util.WebSocketClient;
+
+public class MainActivity extends BaseActivity {
+
+    private Emitter.Listener onId = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            mWebSocketClient.start("bourne3");
+        }
+    };
+
+    public Emitter.Listener onMessage = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String type = data.getString("type");
+                VoipApp.setId(data.getString("from"));
+                if (type.equals("invite")) {
+                    Intent intent = new Intent();
+                    intent.setAction(VoipReceiver.ACTION_VOIP_RECEIVER);
+                    intent.setComponent(new ComponentName(VoipApp.getInstance().getPackageName(), VoipReceiver.class.getName()));
+                    // 发送广播
+                    VoipApp.getInstance().sendBroadcast(intent);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private WebSocketClient mWebSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         if (!EasyPermissions.hasPermissions(this, perms)) {
             EasyPermissions.requestPermissions(this, "Need permissions for camera & microphone", 0, perms);
         }
+
+        mWebSocketClient = WebSocketClient.instance();
+        mWebSocketClient.connect(getResources().getString(R.string.web_rtc_server));
+        mWebSocketClient.on("id", onId);
+        mWebSocketClient.on("message", onMessage);
     }
 
     @Override
