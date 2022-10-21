@@ -66,14 +66,16 @@ public class JoinActivity extends AppCompatActivity {
             try {
                 String type = data.getString("type");
                 JSONObject payload = null;
-                if (!type.equals("init")) {
+                if (!type.equals("init") && !type.equals("invite")) {
                     payload = data.getJSONObject("payload");
                 }
                 // if (id == null)
                 id = data.getString("from");
 
-                if (type.equals("init")) {
-                    oInit();
+                if (type.equals("invite")) {
+                    onInvite();
+                } else if (type.equals("init")) {
+                    onInit();
                 } else if (type.equals("offer")) {
                     onOffer(payload);
                 } else if (type.equals("answer")) {
@@ -88,7 +90,11 @@ public class JoinActivity extends AppCompatActivity {
             }
         }
 
-        private void oInit() {
+        private void onInvite() throws JSONException {
+            mWebSocketClient.sendMessage(id, "accept", null);
+        }
+
+        private void onInit() {
             mPeerConnection.createOffer(mWebRtcObserver, mMediaConstraints);
         }
 

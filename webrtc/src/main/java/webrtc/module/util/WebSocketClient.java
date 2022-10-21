@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import webrtc.module.activity.JoinActivity;
 
 public class WebSocketClient {
     private Socket client;
