@@ -266,10 +266,6 @@ public class JoinActivity extends BaseActivity {
         mRemoteSurfaceView = findViewById(R.id.RemoteSurfaceView);
 
         createPeerConnection();
-
-        Intent intent = getIntent();
-        String url = intent.getStringExtra("url");
-
         mWebSocketClient = WebSocketClient.instance();
         mWebSocketClient.on("message", JoinActivity.this.onMessage);
     }

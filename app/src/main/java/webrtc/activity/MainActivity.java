@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.web2android.R;
 
 import org.json.JSONException;
@@ -17,7 +15,6 @@ import io.socket.emitter.Emitter;
 import pub.devrel.easypermissions.EasyPermissions;
 import webrtc.module.VoipApp;
 import webrtc.module.activity.BaseActivity;
-import webrtc.module.activity.InviteActivity;
 import webrtc.module.activity.JoinActivity;
 import webrtc.module.service.VoipReceiver;
 import webrtc.module.util.WebSocketClient;
@@ -61,7 +58,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, JoinActivity.class);
-                intent.putExtra("url", getResources().getString(R.string.web_rtc_server));
                 startActivity(intent);
             }
         });

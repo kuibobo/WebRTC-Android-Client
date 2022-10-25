@@ -9,9 +9,6 @@ public class VoipApp extends Application {
 
     private static String id;
     private static VoipApp app;
-    private String username = "";
-    private String roomId = "";
-    private String otherUserId = "";
 
     public static VoipApp getInstance() {
         return app;
